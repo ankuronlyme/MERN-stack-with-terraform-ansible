@@ -1,0 +1,58 @@
+---
+- name: setup web server configuration 
+  hosts: web_server
+  become: yes
+  vars:
+    app_directory: /home/ubuntu/TravelMemory
+  tasks:
+    - name: Add NodeSource GPG key
+      apt_key:
+        url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+        state: present
+
+    - name: Add Node.js 18 repository
+      apt_repository:
+        repo: deb https://deb.nodesource.com/node_18.x focal main
+        state: present
+        filename: nodesource
+        update_cache: yes
+
+    - name: Install Node.js 18
+      apt:
+        name: nodejs
+        state: present
+  
+    
+    - name: Ensure directory exists for MERN app
+      file:
+        path: "{{ app_directory }}"
+        state: directory
+        owner: ubuntu
+        mode: "0700"
+
+    - name: Clone MERN application repository
+      git:
+        repo: https://github.com/surendergupta/TravelMemory.git
+        dest: "{{ app_directory }}"
+        force: true
+        update: yes
+
+    - name: Check if backend package.json exists
+      stat:
+        path: "{{ app_directory }}/backend/package.json"
+      register: backend_package_json
+
+    - name: Install backend Node.js dependencies
+      npm:
+        path: "{{ app_directory }}/backend"
+      when: backend_package_json.stat.exists
+    
+    - name: Check if frontend package.json exists
+      stat:
+        path: "{{ app_directory }}/frontend/package.json"
+      register: frontend_package_json
+
+    - name: Install frontend Node.js dependencies
+      npm:
+        path: "{{ app_directory }}/frontend"
+      when: frontend_package_json.stat.exists

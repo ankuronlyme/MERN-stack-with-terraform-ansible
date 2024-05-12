@@ -1,0 +1,39 @@
+---
+- name: Configure Nginx
+  hosts: web_server
+  become: true
+  vars:
+    app_domain: "{{ ansible_host }}"  # Replace with your domain
+    app_directory: /home/ubuntu/TravelMemory
+  tasks:
+    - name: Remove default Nginx configuration
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
+    - name: Create Nginx virtual host configuration
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/sites-available/{{ app_domain }}
+      notify:
+        - Reload Nginx
+
+    - name: Enable the virtual host configuration
+      file:
+        src: /etc/nginx/sites-available/{{ app_domain }}
+        dest: /etc/nginx/sites-enabled/{{ app_domain }}
+        state: link
+    
+    # - name: Uncomment server_names_hash_bucket_size directive
+    #   ansible.builtin.replace:
+    #     path: /etc/nginx/nginx.conf
+    #     regexp: '^(\s*)#(\s*server_names_hash_bucket_size.*)$'
+    #     replace: '\1\2' 
+    #   notify:
+    #     - Reload Nginx
+
+  handlers:
+    - name: Reload Nginx
+      service:
+        name: nginx
+        state: reloaded
