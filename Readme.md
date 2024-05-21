@@ -93,7 +93,8 @@ Check the other things like (subnets, routes, networking)
 
 First, ensure Ansible is installed on your local machine.
    
-   command: sudo apt-get install ansible
+    command: sudo apt update
+             sudo apt-get install ansible
 
 Inventory: get Ansible inventory file (inventory.ini) with the IP addresses of your EC2 instances from terrafrom apply cmd executed.
 
@@ -109,24 +110,24 @@ Execute: Run these command for avoid and save private key in cfg
 
     Execution: Run Ansible playbooks to configure and deploy the application.
 
-  ansible web_server -m ping
-  ansible web_server -a "node -v"
+    command: ansible web_server -m ping
+             ansible web_server -a "node -v"
   
   ![alt text](./images/image_13.png)
 
-  ansible web_server -a "npm -v"
+    command: ansible web_server -a "npm -v"
 
   ![alt text](./images/image_14.png)
 
-  ansible-playbook copykey.yaml
+    command: ansible-playbook copykey.yaml
 
   ![alt text](./images/image_8.png)
  
-  ansible web_server -a "ls -ltr"
+    command: ansible web_server -a "ls -ltr"
 
   ![alt text](./images/image_9.png)
 
-  ansible-playbook installnginx.yaml
+    command: ansible-playbook installnginx.yaml
 
   ![alt text](./images/image_10.png)
 
@@ -134,13 +135,66 @@ Execute: Run these command for avoid and save private key in cfg
 
   ![alt text](./images/image_11.png)
 
-  ansible-playbook setup_server.yaml
+    commamnd: ansible-playbook setup_server.yaml
   
   ![alt text](./images/image_12.png)
 
-  ansible web_server -a "ls"
+    command: ansible web_server -a "ls"
 
   ![alt text](./images/image_15.png)
+
+
+# DB_SERVER: Setup Database server:
+
+    commands: chmod 400 tm_key.pem
+              ssh -i tm_key.pem ubuntu@35.89.147.91
+              ubuntu@ip-10.0.1.19:~/ ssh -i tm_key.pem ubuntu@10.0.2.206
+              docker ps
+              docker pull mongo
+              docker run -dp 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root -e MONGO_INITDB_ROOT_PASSWORD=root -v /data/db --name mongodb mongo:latest
+              docker exec -it mongodb /bin/bash
+              mongosh -u root -p root
+              use travelmemory
+              db.createUser({
+                user: "root",
+                pwd: "secret1234",
+                roles: [{ role: "readWrite", db: "travelmemory" }]
+                });
+
+
+# DEPLOY_SERVER: Deploy Frontend and backend server
+
+    command:ansible-playbook deployment_server.yaml
+
+![alt text](./images/image_16.png)
+
+    command: ansible-playbook config_nginx.yaml
+
+![alt text](./images/image_17.png)
+
+curl http://13.126.247.143
+
+![alt text](./images/image_18.png)
+
+curl http://13.126.247.143/api/
+
+![alt text](./images/image_19.png)
+
+Now check on browser with ip address:
+
+- For frontend:
+
+![alt text](./images/image_20.png)
+
+![alt text](./images/image_21.png)
+
+- For backend: 
+
+![alt text](./images/image_22.png)
+
+
+
+
 
 
 
