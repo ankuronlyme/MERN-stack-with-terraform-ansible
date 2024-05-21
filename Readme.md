@@ -85,3 +85,63 @@ Check the other things like (subnets, routes, networking)
 
 ![alt text](./images/image_7.png)
 
+
+
+#Configuration and Deployment with Ansible
+
+# Ansible Configuration:
+
+First, ensure Ansible is installed on your local machine.
+   
+   command: sudo apt-get install ansible
+
+Inventory: get Ansible inventory file (inventory.ini) with the IP addresses of your EC2 instances from terrafrom apply cmd executed.
+
+ansible.cfg: Create an Ansible config file (ansible.cfg)
+
+Execute: Run these command for avoid and save private key in cfg
+   
+    commands: cat ~/.ssh/ansible_key >> ~/.ssh/authorized_keys
+              eval $(ssh-agent)
+              ssh-add ~/.ssh/ansible_key
+
+# Write ansible playbook:
+
+    Execution: Run Ansible playbooks to configure and deploy the application.
+
+  ansible web_server -m ping
+  ansible web_server -a "node -v"
+  
+  ![alt text](./images/image_13.png)
+
+  ansible web_server -a "npm -v"
+
+  ![alt text](./images/image_14.png)
+
+  ansible-playbook copykey.yaml
+
+  ![alt text](./images/image_8.png)
+ 
+  ansible web_server -a "ls -ltr"
+
+  ![alt text](./images/image_9.png)
+
+  ansible-playbook installnginx.yaml
+
+  ![alt text](./images/image_10.png)
+
+  curl http://13.126.247.143
+
+  ![alt text](./images/image_11.png)
+
+  ansible-playbook setup_server.yaml
+  
+  ![alt text](./images/image_12.png)
+
+  ansible web_server -a "ls"
+
+  ![alt text](./images/image_15.png)
+
+
+
+
